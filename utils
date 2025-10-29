@@ -1,0 +1,18 @@
+import pandas as pd
+import ta
+
+def add_indicators(df):
+    df['rsi'] = ta.momentum.RSIIndicator(df['Close']).rsi()
+    df['ema20'] = df['Close'].ewm(span=20, adjust=False).mean()
+    df['ema50'] = df['Close'].ewm(span=50, adjust=False).mean()
+    return df
+
+def detect_candle_pattern(df):
+    last = df.iloc[-1]
+    prev = df.iloc[-2]
+    if last['Close'] > last['Open'] and prev['Close'] < prev['Open']:
+        return "Bullish Engulfing"
+    elif last['Close'] < last['Open'] and prev['Close'] > prev['Open']:
+        return "Bearish Engulfing"
+    else:
+        return "No pattern"
